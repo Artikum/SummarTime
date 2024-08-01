@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "heapq": "^0.0.3",
+    "nltk": "^0.0.1",
+    "string": "^3.3.3"
+  }
+}

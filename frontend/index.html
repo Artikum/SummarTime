@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+		rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&display=swap" rel="stylesheet">	
+	<link rel="stylesheet" href="index.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=LXGW+WenKai+TC&display=swap" rel="stylesheet">
+	<title>SummarTime</title>
+</head>
+<body>
+	<h1 class="main-header">SummarTime</h1>
+	<h2>База данных</h2>
+	<!-- <py-script> print("Hello, World!") </py-script> -->
+	<div class="root">
+		<div class="buttons-block">
+			<button class='switch-content-button' id='selectUsersButton'>ПОЛЬЗОВАТЕЛИ</button>
+			<button class='switch-content-button' id='selectLogsButton'>ЛОГИ</button>
+			<button class='switch-content-button' id='selectRolesButton'>РОЛИ</button>
+			
+		</div>
+		<div class="content-block">
+			<div id="content" class="content">
+				<p id='block-chooser-notifier'>Выберите раздел</p>
+			</div>
+		</div>
+		<div class="processing-block content">
+			<div>
+				<h1>Текстовый процессор</h1>
+			</div>
+			<div class="text-processing-body">
+				<div class="text-input-block">
+					<form id="textForm">
+						<textarea id="inputText" rows="4" cols="50" 
+							class="text-processing-input"
+							placeholder="Введите текст"></textarea><br>
+						<div class="text-processing-buttons-container">
+							<button class="text-processing-action-button" type="button" onclick="preprocessText()">ПРЕДОБРАБОТАТЬ ТЕКСТ</button>
+							<button class="text-processing-action-button" type="button" onclick="titleGen()">СГЕНЕРИРОВАТЬ ЗАПРОС</button>
+							<button class="text-processing-action-button" type="button" onclick="textCollector()">НАЙТИ СХОЖИЕ СТАТЬИ</button>
+							<button class="text-processing-action-button" type="button" onclick="summertimeGen()">СУММИРОВАТЬ СТАТЬИ</button>
+						</div>
+					</form>
+				</div>
+				<div class="text-processed">
+					<h2 class="text-processed-header">Обработанный текст</h2>
+					<div>
+						<textarea id="outputText" rows="4" 
+							cols="50" readonly placeholder="ㅤ"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<h1>ㅤ</h1>
+	<h1>ㅤ</h1>
+	<h1>ㅤ</h1>
+
+	<!-- <h1>Text Processor</h1>
+    <form id="textForm">
+        <textarea id="inputText" rows="4" cols="50"></textarea><br>
+		<!-- <input type="text" id="text1" placeholder="Enter first text">
+        <input type="text" id="text2" placeholder="Enter second text">
+		<button type="submit">Submit</button> -->
+        <!-- <button type="button" onclick="preprocessText()">Предобработка</button>
+        <button type="button" onclick="titleGen()">Генератор поисковых запросов</button>
+        <button type="button" onclick="textCollector()">Поиск схожих статей</button>
+        <button type="button" onclick="summertimeGen()">Суммирование</button> -->
+		
+    <!-- </form> -->
+    <!-- <h2>Processed Text</h2>
+    <!-- <textarea id="outputText" rows="4" cols="50" readonly></textarea> -->
+
+	<script type="text/javascript">
+		const hostName = window.location.hostname;
+
+	async function preprocessText() {
+	    const inputText = document.getElementById('inputText').value;
+	    const response = await fetch(`http://${hostName}:5000/preprocess`, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json'
+	        },
+	        body: JSON.stringify({ text: inputText })
+	    });
+	    const result = await response.json();
+	    document.getElementById('outputText').value = result.text;
+	}
+
+
+	async function textCollector() {
+		const limit = 10 //window.prompt('Сколько статей найти?', limit);
+	    const inputText = document.getElementById('inputText').value;
+			
+			
+		const response = await fetch(`http://${hostName}:5000/textcollector`, { // TODO: сделать так везде
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json'
+	        },
+	        body: JSON.stringify({ text: inputText, int: limit })
+	    });
+	    const result = await response.json();
+	    document.getElementById('outputText').value = result.text;
+	}
+
+	//titlegen
+	async function titleGen() {
+	    const inputText = document.getElementById('inputText').value;
+		const response = await fetch(`http://${hostName}:5000/titlegen`, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json'
+	        },
+	        body: JSON.stringify({ text: inputText })
+	    });
+	    const result = await response.json();
+	    document.getElementById('outputText').value = result.text;
+	}
+
+	async function summertimeGen() {
+	    const inputText = document.getElementById('inputText').value;
+		const response = await fetch(`http://${hostName}:5000/summertime`, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json'
+	        },
+	        body: JSON.stringify({ text: inputText })
+	    });
+	    const result = await response.json();
+	    document.getElementById('outputText').value = result.text;
+	}
+
+		// document.getElementById('textForm').addEventListener('submit', function(event) {
+        //     event.preventDefault();
+
+        //     const text1 = document.getElementById('text1').value;
+        //     const text2 = document.getElementById('text2').value;
+
+        //     fetch('http://localhost:5000/process', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({ text1, text2 })
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         document.getElementById('outputText').value = data.result ? 'True' : 'False';
+        //     })
+        //     .catch(error => console.error('Error:', error));
+        // });
+
+		const content = document.getElementById('content');
+
+		const clearBlock = (block) => {
+			while(block.firstChild) {
+				block.removeChild(block.firstChild);
+			}
+		}
+		
+		const getApiHost = (apiRoute) => {
+			return `http://localhost:3100${apiRoute}`;
+		}
+
+		const buildTable = (entities, headers, contentBlock, deleteAction, updateAction, addAction) => {
+			clearBlock(contentBlock);
+			
+
+			entities.sort((e1, e2) => e1.id > e2.id ? 1 : -1);
+
+			const table = document.createElement('table');
+			table.setAttribute('class', 'table');
+
+			const headerRow = table.insertRow();
+			headerRow.setAttribute('class', 'header-row');
+			headers.forEach(header => {
+				const cell = headerRow.insertCell();
+				cell.textContent = header;
+			});
+
+			entities.forEach(entity => {
+				const row = table.insertRow();
+				
+				Object.keys(entity).forEach(key => {
+					const cell = row.insertCell();
+					cell.textContent = entity[key];
+				});
+				const updateButtonCell = row.insertCell();
+
+				const removeButtonCell = row.insertCell();
+				
+				const removeButton = document.createElement('button');
+				removeButton.textContent = 'delete';
+
+				const updateButton = document.createElement('button');
+				updateButton.textContent = 'update';
+
+				updateButton.setAttribute('class', 'update-entity-button');
+				removeButton.setAttribute('class', 'remove-entity-button');
+
+				removeButton.addEventListener('click', (e) => {
+					deleteAction(entity);
+				});
+
+				updateButton.addEventListener('click', (e) => {
+					updateAction(entity);
+				});
+
+				removeButtonCell.appendChild(removeButton);
+				updateButtonCell.appendChild(updateButton);
+			})
+			
+			const addButtonRow = table.insertRow();
+			const addButtonCell = addButtonRow.insertCell();
+
+			addButtonCell.colSpan = Object.keys(entities[0]).length + 2;
+
+			const addButton = document.createElement('button');
+			addButton.addEventListener('click', () => {
+				addAction();
+			})
+			addButton.textContent = 'ADD';
+			addButton.setAttribute('class', 'add-entity-button');
+			addButtonCell.appendChild(addButton);
+
+
+			contentBlock.appendChild(table);
+		}
+
+		document.getElementById('selectUsersButton').addEventListener('click', (event) => {
+			const deleteAction = (user) => {
+				fetch(getApiHost(`/users/${user.id}`), {method: 'DELETE'})
+					.then(response => {
+						if(response.status === 200) {
+							return response.json();
+						}
+						throw new Error('Ошибка выполнения запроса');
+					}).then(r => alert('Пользователь удален'))
+					.catch(e => alert(e));
+			};
+
+			const updateAction = (user) => {
+				const username = window.prompt('Логин', user.username);
+				const password = window.prompt('Пароль', user.password);
+				// const groupId = window.prompt('ID группы');
+				const role_id = window.prompt('Роль');
+
+				fetch(getApiHost(`/users/${user.id}?username=${username}&password=${password}&role_id=${role_id}`), {method: 'PUT'})
+					.then(response => {
+						if(response.status === 200) {
+							return response.json();
+						}
+						throw new Error(response.statusText);
+					}).then(r => alert('Пользователь обновлен'))
+					.catch(e => alert(e));
+			};
+
+			const addAction = () => {
+				const username = window.prompt('Логин');
+				const password = window.prompt('Пароль');
+				// const groupId = window.prompt('ID группы');
+				const role_id = window.prompt('Роль');
+
+				fetch(getApiHost(`/users?username=${username}&password=${password}&role_id=${role_id}`), {method: 'POST'})
+					.then(response => {
+						if(response.status === 200) {
+							return response.json();
+						}
+						throw new Error(response.statusText);
+					}).then(r => alert('Пользователь добавлен'))
+					.catch(e => alert(e));
+			}
+			
+			fetch(getApiHost('/users'), {method: 'GET'})
+				.then(response => {
+					if(response.status === 200) {
+						return response.json();
+					}
+					throw new Error('Ошибка запроса');
+				}).then(users => {
+					buildTable(users, ['ID', 'Логин', 'Пароль', 'Дата Создания Аккаунта', 'Роль'], content, deleteAction, updateAction, addAction);
+				}).catch(e => {
+					alert(e);
+				})
+		});
+
+		document.getElementById('selectLogsButton').addEventListener('click', (event) => {
+			const deleteAction = (log) => {
+				fetch(getApiHost(`/logs/${log.id}`), {method: 'DELETE'})
+					.then(response => {
+						if(response.status === 200) {
+							return response.json();
+						}
+						throw new Error(response.statusText);
+					}).then(r => alert('Лог запись удалена'))
+					.catch(e => alert(e));
+			}
+
+			// const updateAction = (group) => {
+			// 	const number = window.prompt('Номер');
+			// 	fetch(getApiHost(`/groups/${group.id}?number=${number}`), {method: 'PUT'})
+			// 		.then(response => {
+			// 			if(response.status === 200) {
+			// 				return response.json();
+			// 			}
+			// 			throw new Error(response.statusText);
+			// 		}).then(r => alert('Группа обновлена'))
+			// 		.catch(e => alert(e));
+			// }
+			
+			const updateAction = (group) => {
+				alert('Невозможно редактировать логи')
+			}
+
+			const addAction = () => {
+				const user_id = window.prompt('Id пользователя');
+				const request_date = window.prompt('Время запроса');
+				const request = window.prompt('Запрос');
+				const prohibition_flag = window.prompt('Запретный флаг');
+				const request_data = window.prompt('Суммаризированный текст');
+				fetch(getApiHost(`/logs?user_id=${user_id}&request_date=${request_date}&request=${request}&prohibition_flag=${prohibition_flag}&request_data=${request_data}`), {method: 'POST'})
+					.then(response => {
+						if(response.status === 200) {
+							return response.json();
+						}
+						throw new Error(response.statusText);
+					}).then(() => alert('Лог запись добавлена'))
+					.catch(e => alert(e));
+			}
+
+			fetch(getApiHost('/logs'), {method: 'GET'})
+				.then(response => {
+					if(response.status === 200) {
+						return response.json();
+					}
+					throw new Error('Ошибка запроса');
+				}).then(logs => {
+					buildTable(logs, ['id', 'user_id','request_date','request','prohibition_flag','request_data'], content, deleteAction, updateAction, addAction); //deleteAction, updateAction, 
+				}).catch(e => alert(e));
+		});
+		
+		document.getElementById('selectRolesButton').addEventListener('click', (event) => {
+			const deleteAction = (role) => {
+				fetch(getApiHost(`/roles/${role.id}`), {method: 'DELETE'})
+					.then(response => {
+						if (response.status === 200) {
+							return response.json();
+						}
+						throw new Error('Ошибка запроса');
+					})
+					.then(() => alert('Роль удалена'))
+					.catch(e => alert(e));
+			}
+
+			const updateAction = (role) => {
+				const role_type = window.prompt('Роль');
+				fetch(getApiHost(`/roles/${role.id}?role_type=${role_type}`), {method: 'PUT'})
+					.then(response => {
+						if (response.status === 200) {
+							return response.json();
+						}
+						throw new Error('Ошибка запроса');
+					}).then(() => alert('Роль обновлена'))
+					.catch(e => alert(e));
+			}
+
+			const addAction = () => {
+				const role_type = window.prompt('Роль');
+				fetch(getApiHost(`/roles?role_type=${role_type}`), {method: 'POST'})
+					.then(response => {
+						if (response.status === 200) {
+							return response.json();
+						}
+						throw new Error('Ошибка запроса');
+					}).then(() => alert('Роль добавлена'))
+					.catch(e => alert(e));
+			}
+			//проверка
+
+			fetch(getApiHost('/roles'), {method: 'GET'})
+				.then(response => {
+					if(response.status === 200) {
+						return response.json();
+					}
+					throw new Error('Ошибка запроса');
+				}).then(roles => {
+					buildTable(roles, ['id', 'role_type'], content, deleteAction, updateAction, addAction);
+				}).catch(e => {
+					alert(e);
+				})
+		});
+
+		document.getElementById('Summarize').addEventListener('click', (event) => {
+			
+		
+		});
+	</script>
+</body>
+</html>
